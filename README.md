@@ -31,6 +31,7 @@ This project is developed by [HumaRobotics](https://www.humarobotics.com/).
 ## Examples files
 
 - [ex_basic.py](./examples/ex_basic.py): Basic example for the communication between Ewellix lifting column and Doosan robot.
+- [ex_move_ewellix.tw](./examples/ex_move_ewellix.tw): A TaskWriter to move the Ewellix column using a user input. (H2017-v2.8.2).
 
 ## Tests files
 

@@ -55,18 +55,20 @@ class Ewellix:
     Interface to use Ewellix with Doosan
     """
 
-    def __init__(self, ip="192.168.1.100", port=50001):
+    def __init__(self, ip="192.168.1.100", port=50001, low_position=665):
         """
         Initialize the connection between the Ewellix and the Doosan.
 
         Params:\n
             - 'ip': ip of the Ewellix
             - 'port': port of the Ewellix
+            - 'low_position': low position of the ewellix column (used to add an offset on move_to command)
         """
 
         self.ip = ip
         self.port = port
         self.timeout = 10 # 10 seconds timeout
+        self.low_position = low_position
 
         tp_log("connection to the Ewellix")
         try:
@@ -184,15 +186,28 @@ class Ewellix:
         elapsed = 0
         while self.get_status()[1].split(',')[2].rstrip("\n") != "READY":
             wait(0.2)
-            print("wait")
+            tp_popup("wait ewellix")
             elapsed = time.time() - start_time 
             if elapsed < self.timeout:
                 tp_popup("Timeout moveTo_absolutePosition")
                 break
 
-        cmd = "moveTo_absolutePosition," + str(pos)
+        cmd = "moveTo_absolutePosition," + str(pos-self.low_position)
         self.write(cmd)
         res, rx_data = self.read()
+
+        start_time = time.time()
+        elapsed = 0
+        wait(3)
+        #tp_log(self.get_status()[1].split(',')[2].rstrip("\n"))
+        while self.get_status()[1].split(',')[2].rstrip("\n") != "READY":
+            wait(0.4)
+            tp_log("wait ewellix")
+            elapsed = time.time() - start_time 
+            if elapsed > self.timeout:
+                tp_popup("Timeout moveTo_absolutePosition")
+                break
+
         return res, rx_data
         
     def stop_moving(self):
@@ -201,11 +216,11 @@ class Ewellix:
         res, rx_data = self.read()
         return res, rx_data
 
-    def initialise(self):
+    def initialise(self, type="LIFTKIT-601", min=0, max=700):
         """Initialization of the Ewellix"""
 
-        self.set_type()
-        self.set_virtual_limits()
+        self.set_type(type="LIFTKIT-601")
+        self.set_virtual_limits(min=0, max=700)
 
 
 if __name__ == "__main__":
@@ -213,7 +228,7 @@ if __name__ == "__main__":
     ewellix.get_status()
     ewellix.initialise()
     ewellix.get_status()
-    ewellix.move_to(500)
+    ewellix.move_to(1200)
     ewellix.get_position()
-    ewellix.move_to(100)
+    ewellix.move_to(800)
     ewellix.get_position()

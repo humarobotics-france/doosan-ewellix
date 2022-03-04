@@ -31,6 +31,7 @@ Ce projet est développé par [HumaRobotics](https://www.humarobotics.com/).
 ## Exemples
 
 - [ex_basic.py](../examples/ex_basic.py): Exemple basique de communication entre une colonne Ewellix et un robot Doosan.
+- [ex_move_ewellix.tw](./examples/ex_move_ewellix.tw): Un "TaskWriter" pour déplacer la colonne Ewellix avec un "User Input" (H2017-v2.8.2).
 
 ## Tests
 
