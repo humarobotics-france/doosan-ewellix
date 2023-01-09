@@ -185,10 +185,10 @@ class Ewellix:
         elapsed = 0
         while self.get_status()[1].split(',')[2].rstrip("\n") != "READY":
             wait(0.2)
-            tp_popup("wait ewellix")
+            #tp_log("wait ewellix")
             elapsed = time.time() - start_time 
-            if elapsed < self.timeout:
-                tp_popup("Timeout moveTo_absolutePosition")
+            if elapsed > self.timeout:
+                tp_log("Timeout moveTo_absolutePosition")
                 break
 
         cmd = "moveTo_absolutePosition," + str(pos-self.low_position)
@@ -201,10 +201,10 @@ class Ewellix:
         #tp_log(self.get_status()[1].split(',')[2].rstrip("\n"))
         while self.get_status()[1].split(',')[2].rstrip("\n") != "READY":
             wait(0.4)
-            tp_log("wait ewellix")
+            #tp_log("wait ewellix")
             elapsed = time.time() - start_time 
             if elapsed > self.timeout:
-                tp_popup("Timeout moveTo_absolutePosition")
+                tp_log("Timeout moveTo_absolutePosition")
                 break
 
         return res, rx_data
@@ -219,7 +219,14 @@ class Ewellix:
         """Initialization of the Ewellix"""
 
         self.set_type(type="LIFTKIT-601")
-        self.set_virtual_limits(min=0, max=700)
+        self.set_virtual_limits(min=min, max=max)
+
+    def check_position(self, position, epsilon=2):
+        pos_ewellix = float(ewellix.get_position()[1].split(",")[2][:-1]) + self.low_position
+        if pos_ewellix > position + epsilon or pos_ewellix < position - epsilon:
+            return False
+        else:
+            return True
 
 
 if __name__ == "__main__":
